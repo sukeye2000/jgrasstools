@@ -11,11 +11,38 @@
     <groupId>org.jgrasstools</groupId>
 	<artifactId>jgt-jgrassgears</artifactId>
     <version>0.7.7-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>JGrass Gears</name>
 	
-	<!-- "internal" deps -->
+      <build>
+          <plugins>
+              <plugin>
+                  <groupId>org.apache.felix</groupId>
+                  <artifactId>maven-bundle-plugin</artifactId>
+                  <version>1.4.0</version>
+                  <extensions>true</extensions>
+                  <configuration>
+                      <instructions>
+                          <Bundle-SymbolicName>${pom.groupId}.${pom.artifactId}</Bundle-SymbolicName>
+                          <Bundle-Name>${pom.name}</Bundle-Name>
+                          <Bundle-Version>${pom.version}</Bundle-Version>
+                          <Private-Package>org.jgrasstools.gears</Private-Package>
+                          <Bundle-Activator>org.jgrasstools.gears.JGrassGearsActivator</Bundle-Activator>
+                      </instructions>
+                  </configuration>
+              </plugin>
+          </plugins>
+      </build>
+
 	<dependencies>
+        <!-- osgi -->
+         <dependency>
+           <groupId>org.apache.felix</groupId>
+           <artifactId>org.osgi.core</artifactId>
+           <version>1.0.0</version>
+        </dependency>
+
+    	<!-- "internal" deps -->
 		<dependency>
 			<groupId>org.jgrasstools</groupId>
 			<artifactId>jgt-oms3</artifactId>
