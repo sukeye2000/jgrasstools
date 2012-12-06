@@ -26,10 +26,13 @@ import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.metadata.iso.extent.GeographicDescriptionImpl;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Utility to add attributes to existing features.
@@ -46,11 +49,21 @@ public class FeatureExtender {
      * @throws FactoryRegistryException 
      * @throws SchemaException
      */
-    public FeatureExtender( SimpleFeatureType oldFeatureType, String[] fieldArray,
-            Class<?>[] classesArray ) throws FactoryRegistryException, SchemaException {
+    public FeatureExtender( SimpleFeatureType oldFeatureType, String[] fieldArray, Class< ? >[] classesArray )
+            throws FactoryRegistryException, SchemaException {
+        this(oldFeatureType, null, fieldArray, classesArray);
+    }
 
-        List<AttributeDescriptor> oldAttributeDescriptors = oldFeatureType
-                .getAttributeDescriptors();
+    public FeatureExtender( SimpleFeatureType oldFeatureType, CoordinateReferenceSystem crs, String[] fieldArray,
+            Class< ? >[] classesArray ) throws FactoryRegistryException, SchemaException {
+        if (fieldArray == null) {
+            fieldArray = new String[0];
+        }
+        if (classesArray == null) {
+            classesArray = new Class< ? >[0];
+        }
+
+        List<AttributeDescriptor> oldAttributeDescriptors = oldFeatureType.getAttributeDescriptors();
         List<AttributeDescriptor> addedAttributeDescriptors = new ArrayList<AttributeDescriptor>();
         for( int i = 0; i < fieldArray.length; i++ ) {
             AttributeTypeBuilder build = new AttributeTypeBuilder();
@@ -68,8 +81,12 @@ public class FeatureExtender {
 
         // create the feature type
         SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
-        b.setName(oldFeatureType.getName());
-        b.setCRS(oldFeatureType.getCoordinateReferenceSystem());
+        b.setName(oldFeatureType.getName().toString());
+        if (crs == null) {
+            b.setCRS(oldFeatureType.getCoordinateReferenceSystem());
+        } else {
+            b.setCRS(crs);
+        }
         b.addAll(newAttributesTypesList);
         newFeatureType = b.buildFeatureType();
     }
@@ -80,6 +97,9 @@ public class FeatureExtender {
      * @return the new created feature, as merged from the old feature plus the new attributes.
      */
     public SimpleFeature extendFeature( SimpleFeature oldFeature, Object[] additionalAttributes ) {
+        if (additionalAttributes == null) {
+            additionalAttributes = new Object[0];
+        }
         Object[] attributes = oldFeature.getAttributes().toArray();
         Object[] newAttributes = new Object[attributes.length + additionalAttributes.length];
         System.arraycopy(attributes, 0, newAttributes, 0, attributes.length);

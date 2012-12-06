@@ -164,4 +164,11 @@ public class TestVectorReader extends HMTestCase {
         }
 
     }
+
+    public static void main( String[] args ) throws Exception {
+        SimpleFeatureCollection inlet = VectorReader.readVector("D:/Dropbox/TMP/toni/inlet_p.properties");
+        VectorWriter.writeVector("D:/Dropbox/TMP/toni/inlet.shp", inlet);
+
+    }
+
 }

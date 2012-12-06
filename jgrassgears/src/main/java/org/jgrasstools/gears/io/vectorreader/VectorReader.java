@@ -71,7 +71,7 @@ public class VectorReader extends JGTModel {
     public SimpleFeatureCollection outVector = null;
 
     @Execute
-    public void process() throws IOException {
+    public void process() throws Exception {
         if (!concatOr(outVector == null, doReset)) {
             return;
         }
@@ -100,12 +100,12 @@ public class VectorReader extends JGTModel {
      * @return the read {@link FeatureCollection}.
      * @throws IOException
      */
-    public static SimpleFeatureCollection readVector( String path ) throws IOException {
+    public static SimpleFeatureCollection readVector( String path ) throws Exception {
         SimpleFeatureCollection fc = getFC(path);
         return fc;
     }
 
-    private static SimpleFeatureCollection getFC( String path ) throws IOException {
+    private static SimpleFeatureCollection getFC( String path ) throws Exception {
         VectorReader reader = new VectorReader();
         reader.file = path;
         reader.process();
@@ -120,7 +120,7 @@ public class VectorReader extends JGTModel {
      * @return the array containing the bounds as [n, s, e, w].
      * @throws IOException
      */
-    public static double[] readBounds( String path ) throws IOException {
+    public static double[] readBounds( String path ) throws Exception {
         SimpleFeatureCollection fc = getFC(path);
         ReferencedEnvelope bounds = fc.getBounds();
 

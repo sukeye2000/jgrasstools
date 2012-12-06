@@ -90,6 +90,10 @@ public class ShapefileFeatureWriter extends JGTModel {
         if (!file.endsWith(".shp")) {
             file = file + ".shp";
         }
+
+        // FeatureUtilities.collectionToShapeFile(file,
+        // geodata.getSchema().getCoordinateReferenceSystem(), geodata);
+
         File shapeFile = new File(file);
         DataStoreFactorySpi dataStoreFactory = new ShapefileDataStoreFactory();
         Map<String, Serializable> params = new HashMap<String, Serializable>();
@@ -97,7 +101,7 @@ public class ShapefileFeatureWriter extends JGTModel {
         String key = "create spatial index";
         if (doIndex) {
             params.put(key, Boolean.TRUE);
-        }else{
+        } else {
             params.put(key, Boolean.FALSE);
         }
         if (geodata != null && geodata.size() != 0) {
@@ -107,10 +111,9 @@ public class ShapefileFeatureWriter extends JGTModel {
         newDataStore.createSchema(pType);
         newDataStore.forceSchemaCRS(pType.getCoordinateReferenceSystem());
 
-        Transaction transaction = new DefaultTransaction("create");
+        Transaction transaction = new DefaultTransaction();
         String typeName = newDataStore.getTypeNames()[0];
         SimpleFeatureStore featureStore = (SimpleFeatureStore) newDataStore.getFeatureSource(typeName);
-
         featureStore.setTransaction(transaction);
         try {
             if (geodata == null) {
